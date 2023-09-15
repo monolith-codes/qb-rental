@@ -1,6 +1,7 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local RentedCars = {}
 local VehicleSpots = {}
+local InSpotLoop = false
 
 RegisterServerEvent('qb-rental:server:rentcar')
 AddEventHandler('qb-rental:server:rentcar', function(data)
@@ -46,8 +47,8 @@ AddEventHandler('qb-rental:server:freespot', function(id1, id2)
    VehicleSpots[id1][id2].used = false
 end)
 
-
 function ReturnVehicle(src, veh, index, returnprice)
+    local Player = QBCore.Functions.GetPlayer(src)
     DeleteEntity(veh)
     if Player.Functions.AddMoney('cash', returnprice) then
         return 1
@@ -116,7 +117,11 @@ function RentSpawnCar(src, model, carspawn, price, returnprice, rentid, carspot)
     rentedcar.veh = veh
     rentedcar.netid = netId
     rentedcar.owner = src
+    rentedcar.model = model
     rentedcar.returnprice = returnprice
+    rentedcar.carspawn = carspawn
+    rentedcar.rentid = rentid
+    rentedcar.carspot = carspot
     if RentedCars[src] == nil then
         RentedCars[src] = {}
     end
@@ -126,5 +131,38 @@ function RentSpawnCar(src, model, carspawn, price, returnprice, rentid, carspot)
     Wait(100)
     local retmsg = ""..Lang:t('success.return_01')..price..Lang:t('success.return_02')..returnprice..Lang:t('success.return_03')..""
     TriggerClientEvent('QBCore:Notify', src, retmsg, "success")
-    TriggerClientEvent("qb-rental:client:startspotloop", src, rentid, carspot, carspawn, netId)
+    StartSpotLoop()
+end
+
+
+function StartSpotLoop()
+    if InSpotLoop == false then
+        InSpotLoop = true
+        SpotLoop()
+    end
+end
+
+function SpotLoop()
+    while InSpotLoop == true do
+        Wait(500)
+        local dospotsloop = false
+        for k,v in pairs(RentedCars) do
+            if VehicleSpots[v[1].rentid][v[1].carspot].used == true then
+                dospotsloop = true
+                local spotcord = v[1].carspawn
+                local vehcord = GetEntityCoords(v[1].veh)
+                if GetDistanceBetweenCoords(spotcord, vehcord) >= 20 then
+                    VehicleSpots[v[1].rentid][v[1].carspot].used = false
+                end
+            end
+            Wait(10)
+        end
+        Wait(100)
+        if dospotsloop == false then
+            InSpotLoop = false
+            Wait(1)
+            return 1
+        end
+        Wait(500)
+    end
 end

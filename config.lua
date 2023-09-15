@@ -6,11 +6,11 @@ Config.Rentals = {
         pedhash = "a_m_y_business_03",
         title = "Normal Vehicle Rental",
         icon = "fas fa-box-circle-check",
-        spawnpoint = vector4(),
+        spawnpoint = vector4(x,y,z,h),
         carspawns = {
-            [1] = vector4(),
-            [2] = vector4(),
-            [3] = vector4(),
+            [1] = vector4(x,y,z,h),
+            [2] = vector4(x,y,z,h),
+            [3] = vector4(x,y,z,h),
         },
         vehiclelist = "vehlist01"
     },
@@ -19,11 +19,11 @@ Config.Rentals = {
         pedhash = "a_m_y_business_03",
         title = "Normal Vehicle Rental",
         icon = "fas fa-box-circle-check",
-        spawnpoint = vector4(),
+        spawnpoint = vector4(x,y,z,h),
         carspawns = {
-            [1] = vector4(),
-            [2] = vector4(),
-            [3] = vector4(),
+            [1] = vector4(x,y,z,h),,
+            [2] = vector4(x,y,z,h),
+            [3] = vector4(x,y,z,h),
         },
         vehiclelist = "vehlist02"
     }
