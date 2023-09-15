@@ -2,6 +2,8 @@
 
 ## **Vehicle rental system for the QBCore Framework**
 
+ <img width=500px  src="https://i.imgur.com/t6AI4C2.jpg" alt="Alt Text"/>
+
 **Dependencies:**
  - [qb-core](https://github.com/qbcore-framework/qb-core)
  - [qb-target](https://github.com/qbcore-framework/qb-target)
