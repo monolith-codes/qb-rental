@@ -37,8 +37,8 @@ RegisterNetEvent('qb-rental:client:startrent', function(data)
     }
     local menureturn =  {
         id = 1,
-        header = "Gebe dein Fahrzeug zurück ",
-        txt = "Gebe dein Fahrzeug zurück und erhalte die Kaution wieder.",
+        header = Lang:t('menu.return_header'),
+        txt = Lang:t('menu.return_text'),
         params = {
             event = "qb-rental:client:startreturnvehicle",
         }

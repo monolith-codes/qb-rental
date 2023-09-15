@@ -24,11 +24,12 @@ AddEventHandler('qb-rental:server:rentcar', function(data)
             table.insert(RentedCars[src], rentedcar)
             TriggerClientEvent('qb-rental:client:setupvehicle', src, netId)
             Wait(100)
-            local retmsg = "vehicle rent for "..data.vehdata.price.."$, return it to get "..data.vehdata.returnprice.."$ back"
+
+            local retmsg = ""..Lang:t('success.return_01')..data.vehdata.price..Lang:t('success.return_02')..data.vehdata.returnprice..Lang:t('success.return_03')..""
             TriggerClientEvent('QBCore:Notify', src, retmsg, "success")
         end
     else
-        TriggerClientEvent('QBCore:Notify', src, "you dont have enough money", "error")
+        TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), "error")
     end
 end)
 
@@ -49,7 +50,7 @@ AddEventHandler('qb-rental:server:startreturnvehicle', function(ped)
             end
             Wait(5)
         end
-        local retmsg = returned.." vehicles returned for "..returendprice.."$"
+        local retmsg = returned..Lang:t('success.return_04')..returendprice.."$"
         TriggerClientEvent('QBCore:Notify', src, retmsg, "success")
     end
 end)
