@@ -17,11 +17,13 @@ CreateThread(function()
         exports['qb-target']:AddTargetEntity(created_ped, {
             options = {
                 {
+                    rentid = k,
                     type = "client",
                     event = "qb-rental:client:startrent",
                     icon = v.icon,
                     label = v.title,
                     vehicledata = Config.VehicleList[v.vehiclelist],
+                    carspawn = v.carspawn
                 },
             },
             distance = 3.0
@@ -54,7 +56,9 @@ RegisterNetEvent('qb-rental:client:startrent', function(data)
             params = {
                 event = "qb-rental:client:rentcar",
                 args = {
+                    rentid = data.rentid,
                     vehdata = v,
+                    carspawn = data.carspawn
                 }
             }
         }
@@ -79,3 +83,29 @@ end)
 RegisterNetEvent('qb-rental:client:startreturnvehicle', function()
     TriggerServerEvent("qb-rental:server:startreturnvehicle", PlayerPedId())
 end)
+
+RegisterNetEvent('qb-rental:client:startspotloop', function(rentid, carspot, carspawn, netId)
+    local inzone = true
+    while true do
+        Wait(300)
+        local vehcoord = GetEntityCoords(NetworkGetEntityFromNetworkId(netId))
+        local distance = GetDistanceBetweenCoords(vehcoord, carspawn)
+        if distance >= 30 and inzone == true then
+            inzone = false
+            TriggerServerEvent("qb-rental:server:freespot", rentid, carspot)
+            Wait(100)
+            break
+        end
+    end
+end)
+
+function GetDistanceBetweenCoords(coord1_in, coord2_in)
+    local x1 = coord1_in.x
+    local x2 = coord2_in.x
+    local y1 = coord1_in.y
+    local y2 = coord2_in.y
+    local z1 = coord1_in.z
+    local z2 = coord2_in.z
+    local distance = math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+    return distance
+end

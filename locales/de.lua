@@ -2,6 +2,7 @@ local Translations = {
     error = {
         not_enough_money = 'Du hast nicht genug Bargeld',
         not_vehicle_nearby = 'Kein Fahrzeug in der Nähe',
+        nospotfound = 'Kein Platz mehr frei',
     },
     success = {
         return_01 = 'Fahrzeug gemietet für ',
