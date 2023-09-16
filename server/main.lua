@@ -27,6 +27,9 @@ AddEventHandler('qb-rental:server:startreturnvehicle', function(ped)
             local distance = GetDistanceBetweenCoords(coords, returnvehcoord)
             if distance <= 20 then
                 ReturnVehicle(src, v.veh, k, v.returnprice)
+                RentedCars[v.owner][v.carspot] = nil
+                VehicleSpots[v.rentid][v.carspot].used = false
+                
                 returned = returned + 1
                 returendprice = returendprice + v.returnprice
                 novehreturned = false
@@ -97,6 +100,7 @@ function GetVehicleSpot(src, data)
         end
         if spot ~= 0 and foundspot == true then
             if Player.Functions.RemoveMoney('cash', data.vehdata.price) then
+                
                 VehicleSpots[data.rentid][spot].used = true
                 RentSpawnCar(src, data.vehdata.model, Config.Rentals[data.rentid].carspawns[spot], data.vehdata.price, data.vehdata.returnprice, data.rentid, spot)
             end
@@ -126,14 +130,17 @@ function RentSpawnCar(src, model, carspawn, price, returnprice, rentid, carspot)
         RentedCars[src] = {}
     end
     TriggerClientEvent("vehiclekeys:client:SetOwner", src, GetVehicleNumberPlateText(veh))
-    table.insert(RentedCars[src], rentedcar)
+    if RentedCars[src][carspot] == nil then
+        RentedCars[src][carspot] = rentedcar
+    else
+        table.insert(RentedCars[src], rentedcar)
+    end
     TriggerClientEvent('qb-rental:client:setupvehicle', src, netId)
     Wait(100)
     local retmsg = ""..Lang:t('success.return_01')..price..Lang:t('success.return_02')..returnprice..Lang:t('success.return_03')..""
     TriggerClientEvent('QBCore:Notify', src, retmsg, "success")
     StartSpotLoop()
 end
-
 
 function StartSpotLoop()
     if InSpotLoop == false then
@@ -147,15 +154,20 @@ function SpotLoop()
         Wait(500)
         local dospotsloop = false
         for k,v in pairs(RentedCars) do
-            if VehicleSpots[v[1].rentid][v[1].carspot].used == true then
-                dospotsloop = true
-                local spotcord = v[1].carspawn
-                local vehcord = GetEntityCoords(v[1].veh)
-                if GetDistanceBetweenCoords(spotcord, vehcord) >= 20 then
-                    VehicleSpots[v[1].rentid][v[1].carspot].used = false
+            Wait(100)
+            for k,v in pairs(v) do
+                if VehicleSpots[v.rentid][v.carspot].used == true then
+                    Wait(10)
+                    dospotsloop = true
+                    dospotsloop = true
+                    local spotcord = v.carspawn
+                    local vehcord = GetEntityCoords(v.veh)
+                    if GetDistanceBetweenCoords(spotcord, vehcord) >= 20 then
+                        VehicleSpots[v.rentid][v.carspot].used = false
+                        table.remove(RentedCars[v.owner], k)
+                    end
                 end
             end
-            Wait(10)
         end
         Wait(100)
         if dospotsloop == false then
